@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 # pandas data frames 
 df=pd.read_csv('cleaned.csv')
-df10=df.head(10)
+df10=df
 df10=df10.drop(columns='order_purchase_timestamp',axis=1)
 
 # side bar for my info

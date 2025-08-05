@@ -72,4 +72,79 @@ Prepare a clean, structured dataset from the raw Olist Brazilian e-commerce data
 
 ---
 
+📊 Phase 2: Data Visualization – Olist E-commerce Dataset
+🎯 Objective
+To explore insights and uncover patterns in the cleaned Olist dataset using various types of visualizations. This helps in understanding customer behavior, product dynamics, and overall e-commerce performance in Brazil.
 
+🔍 Steps Performed
+Library Imports
+Imported essential Python libraries:
+
+pandas for data manipulation
+
+matplotlib and seaborn for visualizations
+
+(Include any others if used like plotly, numpy, datetime, etc.)
+
+Exploratory Plots
+
+Created different plots to analyze trends and relationships across key features:
+
+📦 Top Selling Product Categories
+
+Bar plot showing top categories by number of orders.
+
+🌍 Orders by Customer State
+
+Bar chart mapping customer states to total orders.
+
+💸 Payment Type Distribution
+
+Pie or bar chart showing proportion of payment methods.
+
+🕒 Monthly Order Volume
+
+Time-series line plot of orders over months or years.
+
+⚖️ Price vs Freight Value
+
+Scatter plot to see correlation between product price and freight value.
+
+🛍️ Top Sellers by Order Count
+
+Bar plot of sellers with highest number of orders.
+
+📏 Product Volume vs Review Score
+
+Box plot to analyze if bulky items get lower/higher review scores.
+
+⭐ Review Score Distribution
+
+Histogram of review scores to check overall customer satisfaction.
+
+Advanced Groupings and Aggregations
+
+Grouped data by customer_state, product_category, review_category, etc. for insightful summaries.
+
+Aggregated key metrics like average payment_value, freight_value, and review_score.
+
+Plot Styling & Customizations
+
+Applied consistent color palettes, titles, axis labels, and rotated tick labels for readability.
+
+Used tight layouts and legends where necessary for presentation-ready output.
+
+📌 Insights Gained
+Certain product categories dominate sales.
+
+Some states have significantly more customer activity.
+
+“Credit card” is the overwhelmingly popular payment method.
+
+There is a visible seasonality or growth trend in order volume over time.
+
+Freight value increases with product price—but not always proportionally.
+
+Some sellers consistently generate high order volumes (ideal for marketing focus).
+
+Low product review scores can correlate with larger/heavier items, possibly due to delivery issues.

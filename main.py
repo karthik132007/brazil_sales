@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from helper import payment_type_pie, review_distribution_bar, monthly_sales_line, sales_by_state, top_catageries
+from helper import payment_type_pie, review_distribution_bar, monthly_sales_line, sales_by_state, top_catageries,scatter_plot,regression_plot,get_state_level_data, price_map, freight_map,load_brazil_geojson,globe_freight_map,freight_price_weight_3d
 import plotly.express as px
 
 # Load Data
@@ -60,7 +60,37 @@ with tab2:
         Dive deeper into customer behavior and delivery performance.
         Explore how delivery time affects review scores, and spot patterns in customer satisfaction.
     """)
-   
+    
+    st.plotly_chart(scatter_plot(df))
+    df['customer_state'] = df['customer_state'].str.upper()
+    state_data = get_state_level_data(df)
+    brazil_geojson = load_brazil_geojson()
+    col1, col2 = st.columns(2)
+    # for feature in brazil_geojson['features']:
+    #             print(feature['properties'])
+    #             break  # just look at one for now
+    # print(state_data['state'].unique())
+
+    with col1:
+        st.markdown("<h4 style='text-align: center; color: white;'>Average price by State</h4>", unsafe_allow_html=True)
+        st.plotly_chart(price_map(state_data, brazil_geojson), use_container_width=True)
+
+    with col2:
+            st.markdown("<h4 style='text-align: center; color: white;'>Average Fright Value by State</h4>", unsafe_allow_html=True)
+            
+            st.plotly_chart(freight_map(state_data, brazil_geojson), use_container_width=True)
+            #print(state_data['state'].unique())
+            brazil_geojson = load_brazil_geojson()
+    with st.container(border=True):
+        with col1:
+            st.subheader("3D Globe View")
+            st.write("Explore freight costs across Brazil in a 3D-ish globe view.")
+            st.plotly_chart(globe_freight_map(df), use_container_width=True)
+        with col2:
+            st.subheader("3D Scatter Plot")
+            st.write("Hover to see product-wise freight, price, and weight.")
+            st.plotly_chart(freight_price_weight_3d(df), use_container_width=True)       
+
 with tab3:
     st.header("🚧 Sales Prediction Coming Soon...")
     st.info("This section is under construction. Stay tuned for more insights 🚀")

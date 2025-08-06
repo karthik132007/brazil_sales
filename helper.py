@@ -1,84 +1,139 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-df=pd.read_csv('cleaned.csv')
+import plotly.express as px
+import plotly.graph_objects as go
+
+# Load your data
+df = pd.read_csv('cleaned.csv')
+
+# Dark theme color setup
 background_color = '#0E1117'
 text_color = '#FAFAFA'
 bar_color = '#FF4B4B'
-# pie chart for payment type
+
+#  Interactive Pie Chart – Payment Type
 def payment_type_pie(df):
-    payment_counts = df['payment_type'].value_counts()
+    payment_counts = df['payment_type'].value_counts().reset_index()
+    payment_counts.columns = ['payment_type', 'count']
 
-    # Define custom colors (make the first one your primary)
-    custom_colors = ['#FF4B4B', '#FAFAFA', '#262730', '#888888']
-
-    # Create figure with dark background
-    fig, ax = plt.subplots(facecolor='#0E1117')  # Outer figure background
-    wedges, texts, autotexts = ax.pie(
+    fig = px.pie(
         payment_counts,
-        labels=payment_counts.index,
-        autopct='%1.1f%%',
-        startangle=140,
-        colors=custom_colors[:len(payment_counts)]  # Limit colors to number of slices
+        names='payment_type',
+        values='count',
+        title=' ',
+        color_discrete_sequence=['#FF4B4B', '#FAFAFA', '#262730', '#888888']
     )
 
-    # Make the pie itself circular
-    ax.axis('equal')  
-
-    # Set title with light-colored text
-    ax.set_title('Payment Type Distribution', color='#FAFAFA', fontsize=14)
-
-    # Customize text labels (slice labels + percentage)
-    for text in texts:
-        text.set_color('#FAFAFA')
-    for autotext in autotexts:
-        autotext.set_color('#FAFAFA')
-
-    # Add legend with white text
-    ax.legend(labels=payment_counts.index, loc='best', facecolor='#262730', labelcolor='#FAFAFA')
+    fig.update_layout(
+        paper_bgcolor=background_color,
+        plot_bgcolor=background_color,
+        font_color=text_color,
+        title_font_color=text_color,
+        legend_title_font_color=text_color,
+        legend=dict(bgcolor='#262730'),
+    )
 
     return fig
 
-# Review distribution bar chart 
+
+# Interactive Bar Chart – Review Distribution
 def review_distribution_bar(df):
-    reviews = df['review_category'].value_counts()
+    reviews = df['review_category'].value_counts().reset_index()
+    reviews.columns = ['review_category', 'count']
 
-    # Set dark theme colors
- 
+    fig = px.bar(
+        reviews,
+        x='review_category',
+        y='count',
+        title=' ',
+        color_discrete_sequence=[bar_color]
+    )
 
-    # Create figure and axes with dark background
-    fig, ax = plt.subplots(facecolor=background_color)
-    ax.set_facecolor('#262730')  # Inner plot area background
-
-    # Plot bars
-    ax.bar(reviews.index, reviews, color=bar_color)
-
-    # Titles and labels
-    ax.set_title("Review Distribution", color=text_color, fontsize=14)
-    ax.set_xlabel("Review Category", color=text_color)
-    ax.set_ylabel("Count", color=text_color)
-
-    # Make ticks readable
-    ax.tick_params(colors=text_color)
-
-    # Rotate x labels if needed
-    plt.setp(ax.get_xticklabels(), rotation=15, ha='right')
+    fig.update_layout(
+        paper_bgcolor=background_color,
+        plot_bgcolor='#262730',
+        font_color=text_color,
+        xaxis_title='Review Category',
+        yaxis_title='Count',
+        title_font_color=text_color,
+    )
 
     return fig
 
-def monthly_sales_line():
-    df['order_purchase_timestamp']=pd.to_datetime(df['order_purchase_timestamp'])
-    df['month']=df['order_purchase_timestamp'].dt.month_name()
-    month_count=df['month'].value_counts()
+
+# Interactive Line Chart – Monthly Sales
+def monthly_sales_line(df):
+    df['order_purchase_timestamp'] = pd.to_datetime(df['order_purchase_timestamp'])
+    df['month'] = df['order_purchase_timestamp'].dt.month_name()
     month_order = ["January", "February", "March", "April", "May", "June",
-               "July", "August", "September", "October", "November", "December"]
+                   "July", "August", "September", "October", "November", "December"]
 
-    month_count.index = month_count.index.str.strip().str.title()
-    month_count = month_count.loc[month_order]
-    fig, ax = plt.subplots(facecolor=background_color)
-    ax.plot(month_count.index,month_count.values,color=bar_color)
-    ax.set_title("Mothly sales",color=text_color)
-    ax.set_xlabel("Months",color=text_color)
-    ax.set_ylabel("Values",color=text_color)
-    ax.tick_params(colors=text_color)
-    plt.setp(ax.get_xticklabels(), rotation=15, ha='right')
+    month_count = df['month'].value_counts().reindex(month_order).fillna(0).astype(int)
+    month_df = pd.DataFrame({
+        'month': month_count.index,
+        'orders': month_count.values
+    })
+
+    fig = px.line(
+        month_df,
+        x='month',
+        y='orders',
+        title='Monthly Sales',
+        markers=True,
+        line_shape='linear'
+    )
+
+    fig.update_layout(
+        paper_bgcolor=background_color,
+        plot_bgcolor=background_color,
+        font_color=text_color,
+        xaxis_title='Month',
+        yaxis_title='Number of Orders',
+        title_font_color=text_color,
+    )
+
     return fig
+
+def sales_by_state(df):
+    # Count and select top 10 states
+    customer_state = df['customer_state'].value_counts().head(10).reset_index()
+    customer_state.columns = ['state', 'sales']
+
+# Plotly bar chart (horizontal)
+    fig = px.bar(
+        customer_state,
+        x='sales',
+        y='state',
+        orientation='h',
+        #title='Sales by Customer State',
+        color='sales',  # Optional: adds gradient color based on value
+        color_continuous_scale='Reds'
+    )
+
+    fig.update_layout(
+        yaxis=dict(autorange="reversed"),  # So highest is at the top
+        plot_bgcolor="#0E1117",  # Optional dark background
+        paper_bgcolor="#0E1117",
+        font_color="#FAFAFA"
+    )
+    return fig
+
+def top_catageries(df):
+    top_categories = df['product_category_name'].value_counts().head(10).reset_index()
+    top_categories.columns = ['category', 'count']
+
+    fig = px.treemap(
+    top_categories,
+    path=['category'],
+    values='count',
+    title='Top 10 Most Bought Product Categories',
+    subtitle='In Portuguese'
+    )
+
+    fig.update_layout(
+    paper_bgcolor='#0E1117',
+    plot_bgcolor='#0E1117',
+    font_color='#FAFAFA',
+    title_font_color='#FAFAFA'
+    )
+    return fig
+
